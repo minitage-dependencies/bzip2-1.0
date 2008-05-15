@@ -1,15 +1,11 @@
-
-def copyto(dest,cplist):
-    import os,shutil
-
-    print os.getcwd()
+import os,shutil
+def copyto(dest, cplist):
     if not os.path.isdir(dest):
         os.mkdir(dest)
     for file in cplist:
-        shutil.copy(file,dest)
+        shutil.copy(file, dest)
 
 def bz2(options,buildout):
-    import os
     compile_dir=options["compile-directory"]
     if os.path.isdir(compile_dir):
         contents = os.listdir(compile_dir)
@@ -22,7 +18,7 @@ def bz2(options,buildout):
     copyto(lib_dest,lib_cplist)
 
     bin_dest=options['location']+"/bin"
-    bin_cplist=['bzdiff', 'bzip2recover',  'bzip2',  'bzgrep']
+    bin_cplist=['bzdiff', 'bzip2recover', 'bzip2', 'bzgrep']
     copyto(bin_dest,bin_cplist)
 
     include_dest=options['location']+"/include"
