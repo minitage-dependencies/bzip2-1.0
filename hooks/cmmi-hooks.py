@@ -18,7 +18,7 @@ def bz2(options, buildout):
     bin_cplist=['bzdiff', 'bzip2recover', 'bzip2', 'bzgrep']
     copyto(bin_dest, bin_cplist)
 
-    include_dest=os.path.join(options['location'], 'unclude')
+    include_dest=os.path.join(options['location'], 'include')
     include_cplist=['bzlib.h', 'bzlib_private.h']
     copyto(include_dest, include_cplist)
     os.chdir(cwd)
