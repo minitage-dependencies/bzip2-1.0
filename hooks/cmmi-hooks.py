@@ -3,6 +3,11 @@ def copyto(dest, cplist):
     if not os.path.isdir(dest):
         os.makedirs(dest)
     for file in cplist:
+        winext =['.exe', '.dll']
+        for ext in winext:
+            if os.path.isfile(file+ext):
+                file = file + ext
+        
         shutil.copy(file, dest)
 
 def bz2(options, buildout):
