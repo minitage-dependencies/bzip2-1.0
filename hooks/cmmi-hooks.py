@@ -1,4 +1,7 @@
 import os,shutil
+
+import subprocess
+
 def copyto(dest, cplist):
     if not os.path.isdir(dest):
         os.makedirs(dest)
@@ -7,24 +10,46 @@ def copyto(dest, cplist):
         for ext in winext:
             if os.path.isfile(file+ext):
                 file = file + ext
-        
-        shutil.copy(file, dest)
 
+        if os.path.exists(file):
+            shutil.copy(file, dest)
+
+#def bz2(options, buildout), *a, **kw):
 def bz2(options, buildout):
     compile_dir=options["compile-directory"]
     cwd = os.getcwd()
     os.chdir(compile_dir)
 
-    lib_dest=os.path.join(options['location'], 'lib')
-    lib_cplist=['libbz2.a', 'libbz2.def', 'libbz2.dsp', ]
-    copyto(lib_dest, lib_cplist)
+    os.environ['CFLAGS'] = os.environ.get('CFlAGS', '') + ' -fPIC'
+    for k in ['CFLAGS', 'CPPFLAGS', 'CXXFLAGS']:
+        if k in os.environ:
+            del os.environ[k]
 
-    bin_dest=os.path.join(options['location'], 'bin')
-    bin_cplist=['bzdiff', 'bzip2recover', 'bzip2', 'bzgrep']
-    copyto(bin_dest, bin_cplist)
+    def make_install():
+        lib_dest=os.path.join(options['location'], 'lib')
 
-    include_dest=os.path.join(options['location'], 'include')
-    include_cplist=['bzlib.h', 'bzlib_private.h']
-    copyto(include_dest, include_cplist)
+        lib_cplist=['libbz2.a', 'libbz2.def', 'libbz2.dsp', ]
+        shared = [f for f in os.listdir('.') if f.startswith('libbz2')]
+        lib_cplist.extend(shared)
+        copyto(lib_dest, lib_cplist)
+        for ext in '.so', '.dll', '.dylib':
+            lib = 'libbz2%s.1.0.4' % ext
+            if os.path.exists(lib):
+                os.symlink(lib, os.path.join(lib_dest, 'libbz2%s' % ext))
+
+        bin_dest=os.path.join(options['location'], 'bin')
+        bin_cplist=['bzdiff', 'bzip2recover', 'bzip2', 'bzgrep', 'bzip2-shared']
+        copyto(bin_dest, bin_cplist)
+        include_dest=os.path.join(options['location'], 'include')
+        include_cplist=['bzlib.h', 'bzlib_private.h']
+        copyto(include_dest, include_cplist)
+
+
+    make_install()
+
+    subprocess.call([options['make-binary'], 'clean'])
+    subprocess.call([options['make-binary'], '-f', 'Makefile-libbz2_so'])
+    make_install()
+
     os.chdir(cwd)
 
