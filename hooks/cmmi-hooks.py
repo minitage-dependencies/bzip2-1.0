@@ -1,4 +1,5 @@
 import os,shutil
+import sys
 
 import subprocess
 
@@ -47,9 +48,10 @@ def bz2(options, buildout):
 
     make_install()
 
-    subprocess.call([options['make-binary'], 'clean'])
-    subprocess.call([options['make-binary'], '-f', 'Makefile-libbz2_so'])
-    make_install()
+    if not sys.platform == 'darwin':
+        subprocess.call([options['make-binary'], 'clean'])
+        subprocess.call([options['make-binary'], '-f', 'Makefile-libbz2_so'])
+        make_install()
 
     os.chdir(cwd)
 
