@@ -35,8 +35,9 @@ def bz2(options, buildout):
         copyto(lib_dest, lib_cplist)
         for ext in '.so', '.dll', '.dylib':
             lib = 'libbz2%s.1.0.4' % ext
-            if os.path.exists(lib):
-                os.symlink(lib, os.path.join(lib_dest, 'libbz2%s' % ext))
+            dest = os.path.join(lib_dest, 'libbz2%s' % ext)
+            if os.path.exists(lib) and not os.path.exists(dest):
+                os.symlink(lib, dest)
 
         bin_dest=os.path.join(options['location'], 'bin')
         bin_cplist=['bzdiff', 'bzip2recover', 'bzip2', 'bzgrep', 'bzip2-shared']
