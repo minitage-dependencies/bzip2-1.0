@@ -28,7 +28,8 @@ def bz2(options, buildout):
 
     def make_install():
         lib_dest=os.path.join(options['location'], 'lib')
-
+        bin_dest=os.path.join(options['location'], 'bin')
+        
         lib_cplist=['libbz2.a', 'libbz2.def', 'libbz2.dsp', ]
         shared = [f for f in os.listdir('.') if f.startswith('libbz2')]
         lib_cplist.extend(shared)
@@ -36,8 +37,19 @@ def bz2(options, buildout):
         for ext in '.so', '.dll', '.dylib':
             lib = 'libbz2%s.1.0.4' % ext
             dest = os.path.join(lib_dest, 'libbz2%s' % ext)
-            if os.path.exists(lib) and not os.path.exists(dest):
+            bin_dest = os.path.join(bin_dest, 'libbz2%s' % ext)
+            if os.path.exists(lib) and not os.path.exists(dest) and not sys.platform.startswith('win'):
                 os.symlink(lib, dest)
+            if os.path.exists(lib) and sys.platform.startswith('win'):
+                shutil.copy2(lib, dest)
+                shutil.copy2(lib, bin_dest)
+                shutil.copy2(lib, '%s.dll' % dest.replace('.so', ''))
+                shutil.copy2(lib, '%s.dll' % bin_dest.replace('.so', ''))
+                shutil.copy2(lib, '%s-1.0.4.dll' % dest.replace('.so', ''))
+                shutil.copy2(lib, '%s-1.0.4.dll' % bin_dest.replace('.so', ''))
+                shutil.copy2(lib, '%s-1.0.dll' % dest.replace('.so', ''))
+                shutil.copy2(lib, '%s-1.0.dll' % bin_dest.replace('.so', ''))
+                
 
         bin_dest=os.path.join(options['location'], 'bin')
         bin_cplist=['bzdiff', 'bzip2recover', 'bzip2', 'bzgrep', 'bzip2-shared']
@@ -52,6 +64,8 @@ def bz2(options, buildout):
     if not sys.platform == 'darwin':
         subprocess.call([options['make-binary'], 'clean'])
         subprocess.call([options['make-binary'], '-f', 'Makefile-libbz2_so'])
+        #if sys.platform.startswith('win'):
+        #    subprocess.call([options['make-binary'], '-f', 'makefile.msc'])
         make_install()
 
     os.chdir(cwd)
