@@ -1,6 +1,8 @@
 *.pyc
 .download
+sys
 .installed.cfg
 bin
 parts
 
+.minitage

@@ -1,0 +1,24 @@
+diff -ur bzip2-1.0.6/Makefile bzip2-1.0.6.new/Makefile
+--- bzip2-1.0.6/Makefile	2010-09-11 00:46:02.000000000 +0200
++++ bzip2-1.0.6.new/Makefile	2012-01-19 08:01:15.692350549 +0100
+@@ -21,7 +21,7 @@
+ LDFLAGS=
+ 
+ BIGFILES=-D_FILE_OFFSET_BITS=64
+-CFLAGS=-Wall -Winline -O2 -g $(BIGFILES)
++CFLAGS=-Wall -fPIC -DPIC -Winline -O2 -g $(BIGFILES)
+ 
+ # Where you want it installed when you do 'make install'
+ PREFIX=/usr/local
+diff -ur bzip2-1.0.6/Makefile-libbz2_so bzip2-1.0.6.new/Makefile-libbz2_so
+--- bzip2-1.0.6/Makefile-libbz2_so	2010-09-11 01:07:52.000000000 +0200
++++ bzip2-1.0.6.new/Makefile-libbz2_so	2012-01-19 08:02:07.609076065 +0100
+@@ -24,7 +24,7 @@
+ SHELL=/bin/sh
+ CC=gcc
+ BIGFILES=-D_FILE_OFFSET_BITS=64
+-CFLAGS=-fpic -fPIC -Wall -Winline -O2 -g $(BIGFILES)
++CFLAGS=-fpic -fPIC -DPIC -Wall -Winline -O2 -g $(BIGFILES)
+ 
+ OBJS= blocksort.o  \
+       huffman.o    \
